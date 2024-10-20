@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+//schema for the services
 const service_schema = mongoose.Schema ({
   name: {
     type: String,

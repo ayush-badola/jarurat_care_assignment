@@ -1,20 +1,15 @@
 var express = require('express');
 var router = express.Router();
 const serviceModel = require("./services");
-
 var app = express();
 
 
-
-
-
-
-
-
+//Route to load and display the frontend for add service
 router.get("/addservice", function(req,res) {
     res.render("add_service");
 });
 
+//Route to add a new service in the database
 router.post("/addservice", async (req,res) => {
     const {name, price, description} = req.body;
     if(!name || !price || !description){
@@ -22,6 +17,7 @@ router.post("/addservice", async (req,res) => {
     }
     if(price<=0)
         res.status(400).send('Price must be a positive number');
+    else{
     try{
         const service = new serviceModel({name, description, price});
         await service.save();
@@ -30,13 +26,12 @@ router.post("/addservice", async (req,res) => {
     catch(err){
         res.status(500).send("An error occured");
     }
+}
 });
 
 
-
+//Route to fetch all the services on the list
 router.get("/allservice", async (req,res) => {
-    
-
     try{
         const allservice = await serviceModel.find();
         res.json(allservice);
@@ -46,10 +41,13 @@ router.get("/allservice", async (req,res) => {
     }
 });
 
+
+//Route to load and display the frontend for update service
 router.get("/updateservice", function(req,res) {
     res.render("update_service");
 });
 
+//Route to update an existing service in the database
 router.post("/updateservice", async (req,res) => {
     const name = req.body.name;
     const newname = req.body.newname;
@@ -70,18 +68,20 @@ router.post("/updateservice", async (req,res) => {
         if(!service){
             res.status(400).send('Service not found');
         }
-        res.status(200).send('Updated successfull');
+        else
+            res.status(200).send('Updated successfull');
     }
     catch(err){
         res.status(500).send("An error occured");
     }
 });
 
-
+//Route to load and display the frontend for delete service
 router.get("/deleteservice", function(req,res) {
     res.render("delete_service");
 });
 
+//Route to delete an existing service in the database
 router.post("/deleteservice", async (req, res) => {
     const name = req.body.name;
     if(!name)
@@ -90,7 +90,8 @@ router.post("/deleteservice", async (req, res) => {
         const service = await serviceModel.findOneAndDelete({name : name});
         if(!service)
             res.status(400).send('Service not found');
-        res.status(200).send('Deleted successfull');
+        else
+            res.status(200).send('Deleted successfull');
     }
     catch(err){
         res.status(500).send('An error occured');
